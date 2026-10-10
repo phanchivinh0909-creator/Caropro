@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberRealm TD - Ultimate Edition v2</title>
+    <title>CyberRealm TD - PvZ x2 Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #030712; color: #f3f4f6; font-family: 'Segoe UI', system-ui, sans-serif; user-select: none; overflow: hidden; }
-        canvas { box-shadow: 0 0 50px rgba(14, 165, 233, 0.3); border-radius: 14px; background: #0b132b; cursor: crosshair; }
+        body { background: #020617; color: #f8fafc; font-family: 'Segoe UI', system-ui, sans-serif; user-select: none; overflow: hidden; }
+        canvas { box-shadow: 0 0 70px rgba(56, 189, 248, 0.4); border-radius: 16px; background: #080e1e; cursor: crosshair; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
     </style>
@@ -15,27 +15,31 @@
 <body class="flex flex-col h-screen p-2 justify-between">
 
     <!-- HEADER / HUD -->
-    <header class="w-full max-w-7xl mx-auto flex justify-between items-center bg-gray-900/95 backdrop-blur px-4 py-2.5 rounded-xl border border-gray-800 shadow-xl">
+    <header class="w-full max-w-7xl mx-auto flex justify-between items-center bg-gray-900/95 backdrop-blur px-4 py-2.5 rounded-xl border border-slate-800 shadow-2xl">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center font-black text-xl shadow-lg animate-pulse">⚡</div>
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-400 to-indigo-600 flex items-center justify-center font-black text-xl shadow-lg animate-pulse">⚡</div>
             <div>
-                <h1 class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400">CYBER REALM TD: ULTIMATE</h1>
-                <p class="text-[10px] text-gray-400">Free Placement • Chain Lightning • AoE Explosions • Audio Synth</p>
+                <h1 class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-indigo-400">CYBER REALM TD: PvZ x2</h1>
+                <p class="text-[10px] text-slate-400">Detailed Sci-Fi Towers • x2 Speed Mode • Advanced Range Preview</p>
             </div>
         </div>
-        <div class="flex gap-4 text-sm font-semibold">
-            <div class="bg-gray-800/80 px-3 py-1.5 rounded-lg border border-gray-700 flex items-center gap-2">
-                <span>🗺️ Bản Đồ:</span> <span id="map-name" class="text-cyan-400 font-bold">Thảo Nguyên Mạng</span>
+        <div class="flex gap-3 text-sm font-semibold items-center">
+            <div class="bg-slate-800/90 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-2">
+                <span>🗺️ Bản Đồ:</span> <span id="map-name" class="text-cyan-400 font-bold">Thảo Nguyên Lượng Tử</span>
             </div>
-            <div class="bg-gray-800/80 px-3 py-1.5 rounded-lg border border-gray-700 flex items-center gap-2">
-                <span>💰 Vàng:</span> <span id="gold-val" class="text-yellow-400 text-lg font-bold">700</span>
+            <div class="bg-slate-800/90 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-2">
+                <span>💰 Vàng:</span> <span id="gold-val" class="text-yellow-400 text-lg font-bold">800</span>
             </div>
-            <div class="bg-gray-800/80 px-3 py-1.5 rounded-lg border border-gray-700 flex items-center gap-2">
+            <div class="bg-slate-800/90 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-2">
                 <span>❤️ Mạng:</span> <span id="hp-val" class="text-red-400 text-lg font-bold">20</span>
             </div>
-            <div class="bg-gray-800/80 px-3 py-1.5 rounded-lg border border-gray-700 flex items-center gap-2">
+            <div class="bg-slate-800/90 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-2">
                 <span>🌊 Đợt:</span> <span id="wave-val" class="text-indigo-400 text-lg font-bold">1/15</span>
             </div>
+            <!-- NÚT X2 TỐC ĐỘ GIỐNG PVZ -->
+            <button id="x2-btn" onclick="toggleSpeed()" class="px-3 py-1.5 bg-slate-800 hover:bg-cyan-700 text-cyan-300 hover:text-white border border-cyan-500/50 rounded-lg text-xs font-bold transition shadow">
+                ⚡ Tốc độ: 1x
+            </button>
         </div>
     </header>
 
@@ -45,16 +49,16 @@
         <div class="relative flex flex-col items-center">
             <canvas id="gameCanvas" width="960" height="540"></canvas>
             
-            <!-- OVERLAY MENU / WIN / GAMEOVER -->
-            <div id="game-overlay" class="absolute inset-0 bg-black/90 backdrop-blur-md flex flex-col items-center justify-center rounded-xl z-20">
-                <h2 id="overlay-title" class="text-4xl font-extrabold mb-3 text-cyan-400 drop-shadow">CYBER REALM TD</h2>
-                <p id="overlay-desc" class="text-gray-300 mb-6 text-center max-w-md text-sm">Hệ thống phòng thủ tự do đã kích hoạt. Hãy chọn bản đồ và bắt đầu chiến dịch bảo vệ lõi không gian!</p>
+            <!-- OVERLAY MENU -->
+            <div id="game-overlay" class="absolute inset-0 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center rounded-2xl z-20">
+                <h2 id="overlay-title" class="text-4xl font-extrabold mb-3 text-cyan-400 drop-shadow-lg">CYBER REALM TD</h2>
+                <p id="overlay-desc" class="text-slate-300 mb-6 text-center max-w-md text-sm">Hệ thống phòng thủ tối tân đã sẵn sàng. Chọn bản đồ và bắt đầu chiến dịch chống lại binh đoàn ngoài hành tinh!</p>
                 
                 <div class="flex flex-col gap-3 w-72">
                     <div class="flex gap-2">
                         <button onclick="selectMap(0)" id="map-btn-0" class="flex-1 py-2 bg-cyan-600 text-white font-bold rounded-lg text-xs border border-cyan-400 shadow">Thảo Nguyên</button>
-                        <button onclick="selectMap(1)" id="map-btn-1" class="flex-1 py-2 bg-gray-800 text-gray-300 font-bold rounded-lg text-xs border border-gray-700 hover:bg-gray-700">Sa Mạc</button>
-                        <button onclick="selectMap(2)" id="map-btn-2" class="flex-1 py-2 bg-gray-800 text-gray-300 font-bold rounded-lg text-xs border border-gray-700 hover:bg-gray-700">Băng Giá</button>
+                        <button onclick="selectMap(1)" id="map-btn-1" class="flex-1 py-2 bg-slate-800 text-slate-300 font-bold rounded-lg text-xs border border-slate-700 hover:bg-slate-700">Sa Mạc</button>
+                        <button onclick="selectMap(2)" id="map-btn-2" class="flex-1 py-2 bg-slate-800 text-slate-300 font-bold rounded-lg text-xs border border-slate-700 hover:bg-slate-700">Băng Giá</button>
                     </div>
                     <button onclick="startGame()" class="py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-extrabold rounded-xl shadow-lg transition transform hover:scale-105">BẮT ĐẦU CHIẾN DỊCH</button>
                 </div>
@@ -62,34 +66,34 @@
         </div>
 
         <!-- CONTROL SIDEBAR -->
-        <div class="w-80 bg-gray-900/95 backdrop-blur p-4 rounded-xl border border-gray-800 flex flex-col justify-between h-[540px] shadow-xl">
+        <div class="w-80 bg-slate-900/95 backdrop-blur p-4 rounded-2xl border border-slate-800 flex flex-col justify-between h-[540px] shadow-2xl">
             <div class="flex flex-col gap-3 overflow-y-auto pr-1">
-                <h3 class="text-sm font-bold text-gray-300 border-b border-gray-800 pb-1.5 flex justify-between items-center">
-                    <span>⚡ KHO TRỤ PHÒNG THỦ</span>
-                    <span class="text-[10px] text-cyan-400 font-normal">Đặt bất kỳ đâu</span>
+                <h3 class="text-sm font-bold text-slate-200 border-b border-slate-800 pb-1.5 flex justify-between items-center">
+                    <span>⚡ HỆ THỐNG TRỤ & MÁY MÓC</span>
+                    <span class="text-[10px] text-cyan-400 font-normal">Xem phạm vi trước khi đặt</span>
                 </h3>
                 <div id="tower-selector" class="grid grid-cols-2 gap-2">
                     <!-- Tạo động bằng JS -->
                 </div>
 
-                <div class="mt-2 border-t border-gray-800 pt-2">
-                    <h3 class="text-xs font-bold text-gray-400 mb-2">✨ KỸ NĂNG ĐẶC BIỆT</h3>
+                <div class="mt-2 border-t border-slate-800 pt-2">
+                    <h3 class="text-xs font-bold text-slate-400 mb-2">✨ KỸ NĂNG VŨ TRỤ</h3>
                     <div class="grid grid-cols-2 gap-2">
-                        <button onclick="castMeteor()" class="p-2 bg-rose-950/80 hover:bg-rose-900 border border-rose-700 rounded-lg text-left transition flex flex-col justify-between">
+                        <button onclick="castMeteor()" class="p-2 bg-rose-950/80 hover:bg-rose-900 border border-rose-800 rounded-xl text-left transition flex flex-col justify-between shadow">
                             <span class="text-xs font-bold text-rose-300">☄️ Thiên Thạch</span>
                             <span class="text-[10px] text-yellow-400 font-semibold mt-1">120 Vàng</span>
                         </button>
-                        <button onclick="castBlink()" class="p-2 bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700 rounded-lg text-left transition flex flex-col justify-between">
-                            <span class="text-xs font-bold text-indigo-300">⚡ Sấm Sét Quét</span>
+                        <button onclick="castBlink()" class="p-2 bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-800 rounded-xl text-left transition flex flex-col justify-between shadow">
+                            <span class="text-xs font-bold text-indigo-300">⚡ Sét Quét Màn</span>
                             <span class="text-[10px] text-cyan-400 font-semibold mt-1">100 Vàng</span>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div class="mt-3 pt-3 border-t border-gray-800 flex flex-col gap-2.5">
-                <div id="selected-tower-info" class="text-[11px] text-gray-300 bg-gray-950/80 p-2.5 rounded-lg border border-gray-800 min-h-[75px]">
-                    Click vào trụ để nâng cấp (tăng sát thương, tầm bắn, tốc độ và mở khóa skill) hoặc bán thu hồi tài nguyên.
+            <div class="mt-3 pt-3 border-t border-slate-800 flex flex-col gap-2.5">
+                <div id="selected-tower-info" class="text-[11px] text-slate-300 bg-slate-950/90 p-2.5 rounded-xl border border-slate-800 min-h-[75px]">
+                    Click chọn trụ để xem phạm vi, nâng cấp tối tân hoặc bán thu hồi tài nguyên.
                 </div>
                 <button id="next-wave-btn" onclick="startNextWave()" class="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold rounded-xl shadow-lg transition text-sm">GỌI ĐỢT QUÁI (WAVE 1)</button>
             </div>
@@ -101,7 +105,7 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        // --- WEB AUDIO SYNTHESIZER (ÂM THANH KHÔNG CẦN FILE) ---
+        // --- WEB AUDIO SYNTHESIZER ---
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playSound(type) {
             if (!audioCtx) return;
@@ -110,61 +114,71 @@
             const gain = audioCtx.createGain();
             osc.connect(gain);
             gain.connect(audioCtx.destination);
-
             let now = audioCtx.currentTime;
+
             if (type === 'shoot') {
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(400, now);
-                osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
-                gain.gain.setValueAtTime(0.1, now);
+                osc.frequency.setValueAtTime(450, now);
+                osc.frequency.exponentialRampToValueAtTime(120, now + 0.1);
+                gain.gain.setValueAtTime(0.08, now);
                 gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
-                osc.start(now);
-                osc.stop(now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
             } else if (type === 'explosion') {
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(120, now);
-                osc.frequency.linearRampToValueAtTime(30, now + 0.3);
-                gain.gain.setValueAtTime(0.2, now);
-                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
-                osc.start(now);
-                osc.stop(now + 0.3);
+                osc.frequency.setValueAtTime(140, now);
+                osc.frequency.linearRampToValueAtTime(25, now + 0.35);
+                gain.gain.setValueAtTime(0.18, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+                osc.start(now); osc.stop(now + 0.35);
             } else if (type === 'tesla') {
                 osc.type = 'square';
-                osc.frequency.setValueAtTime(800, now);
-                osc.frequency.exponentialRampToValueAtTime(200, now + 0.15);
-                gain.gain.setValueAtTime(0.15, now);
+                osc.frequency.setValueAtTime(900, now);
+                osc.frequency.exponentialRampToValueAtTime(250, now + 0.15);
+                gain.gain.setValueAtTime(0.12, now);
                 gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
-                osc.start(now);
-                osc.stop(now + 0.15);
+                osc.start(now); osc.stop(now + 0.15);
             } else if (type === 'gold') {
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(600, now);
-                osc.frequency.setValueAtTime(900, now + 0.08);
-                gain.gain.setValueAtTime(0.1, now);
+                osc.frequency.setValueAtTime(650, now);
+                osc.frequency.setValueAtTime(950, now + 0.08);
+                gain.gain.setValueAtTime(0.08, now);
                 gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
-                osc.start(now);
-                osc.stop(now + 0.2);
+                osc.start(now); osc.stop(now + 0.2);
             }
         }
 
-        // --- CẤU HÌNH BẢN ĐỒ & ĐƯỜNG ĐI ---
+        // --- CƠ CHẾ X2 TỐC ĐỘ (PvZ Style) ---
+        let gameSpeed = 1;
+        function toggleSpeed() {
+            gameSpeed = gameSpeed === 1 ? 2 : 1;
+            const btn = document.getElementById('x2-btn');
+            if (gameSpeed === 2) {
+                btn.className = "px-3 py-1.5 bg-yellow-600 hover:bg-yellow-500 text-white border border-yellow-400 rounded-lg text-xs font-bold transition shadow animate-pulse";
+                btn.innerText = "⚡ Tốc độ: 2x (FAST)";
+            } else {
+                btn.className = "px-3 py-1.5 bg-slate-800 hover:bg-cyan-700 text-cyan-300 hover:text-white border border-cyan-500/50 rounded-lg text-xs font-bold transition shadow";
+                btn.innerText = "⚡ Tốc độ: 1x";
+            }
+        }
+
+        // --- BẢN ĐỒ ---
         const maps = [
             {
-                name: "Thảo Nguyên Mạng",
-                bg: "#0b132b",
-                pathColor: "#1c2541",
-                waypoints: [{x:0, y:100}, {x:260, y:100}, {x:260, y:420}, {x:540, y:420}, {x:540, y:120}, {x:780, y:120}, {x:780, y:450}, {x:960, y:450}]
+                name: "Thảo Nguyên Lượng Tử",
+                bg: "#060f22",
+                pathColor: "#111f3d",
+                waypoints: [{x:0, y:110}, {x:260, y:110}, {x:260, y:430}, {x:540, y:430}, {x:540, y:120}, {x:780, y:120}, {x:780, y:450}, {x:960, y:450}]
             },
             {
-                name: "Sa Mạc Đỏ",
-                bg: "#180f02",
-                pathColor: "#2b1a04",
+                name: "Sa Mạc Ion",
+                bg: "#160d02",
+                pathColor: "#291804",
                 waypoints: [{x:0, y:450}, {x:200, y:450}, {x:200, y:130}, {x:500, y:130}, {x:500, y:420}, {x:760, y:420}, {x:760, y:90}, {x:960, y:90}]
             },
             {
-                name: "Cực Bắc Băng Giá",
-                bg: "#031d2e",
-                pathColor: "#082b44",
+                name: "Cực Băng Plasma",
+                bg: "#021626",
+                pathColor: "#072338",
                 waypoints: [{x:480, y:0}, {x:480, y:160}, {x:180, y:160}, {x:180, y:390}, {x:780, y:390}, {x:780, y:540}]
             }
         ];
@@ -172,16 +186,16 @@
         let currentMapIndex = 0;
         let activeMap = maps[0];
 
-        // --- CÁC LOẠI TRỤ VÀ NÂNG CẤP KỸ NĂNG ---
+        // --- CÁC LOẠI TRỤ ---
         const towerTypes = [
-            { id: 'archer', name: 'Trụ Cung', cost: 90, range: 140, damage: 16, speed: 22, color: '#38bdf8', desc: 'Tốc độ cực nhanh. Lv3+ bắn đa mũi tên.' },
-            { id: 'cannon', name: 'Trụ Pháo', cost: 140, range: 120, damage: 55, speed: 65, color: '#f43f5e', desc: 'Bắn đạn nổ AoE cực mạnh. Lv3+ tạo siêu địa chấn.' },
-            { id: 'tesla', name: 'Trụ Lôi Điện', cost: 180, range: 130, damage: 32, speed: 45, color: '#eab308', desc: 'Phóng sét giật lan nhiều mục tiêu cùng lúc.' },
-            { id: 'mage', name: 'Trụ Phép', cost: 130, range: 125, damage: 24, speed: 40, color: '#a855f7', desc: 'Làm chậm tốc độ & bộc phá năng lượng.' },
-            { id: 'barracks', name: 'Doanh Trại', cost: 100, range: 100, damage: 12, speed: 80, color: '#10b981', desc: 'Triệu hồi lính chiến binh chặn đường quái.' }
+            { id: 'generator', name: 'Máy Tạo Vàng', cost: 110, range: 0, damage: 0, speed: 180, color: '#eab308', desc: 'Sản xuất vàng định kỳ. Càng nâng cấp đẻ vàng càng nhanh.' },
+            { id: 'archer', name: 'Trụ Laser Cung', cost: 90, range: 145, damage: 18, speed: 20, color: '#38bdf8', desc: 'Bắn tia laser cực nhanh. Lv3+ bắn đa hướng.' },
+            { id: 'cannon', name: 'Trụ Pháo Plasma', cost: 150, range: 125, damage: 60, speed: 70, color: '#f43f5e', desc: 'Bắn đạn pháo hạt nhân AoE rực rỡ.' },
+            { id: 'tesla', name: 'Trụ Lôi Điện', cost: 190, range: 135, damage: 35, speed: 45, color: '#a855f7', desc: 'Phóng dòng điện plasma giật lan liên tục.' },
+            { id: 'barracks', name: 'Doanh Trại Lính', cost: 100, range: 105, damage: 14, speed: 80, color: '#10b981', desc: 'Triệu hồi chiến binh chặn đầu quái.' }
         ];
 
-        let gold = 700;
+        let gold = 800;
         let hp = 20;
         let currentWave = 1;
         let maxWaves = 15;
@@ -193,10 +207,12 @@
         let projectiles = [];
         let particles = [];
         let soldiers = [];
-        let hero = { x: 480, y: 270, targetX: 480, targetY: 270, speed: 4, damage: 30, range: 120, hp: 300, maxHp: 300, cooldown: 0 };
+        let hero = { x: 480, y: 270, targetX: 480, targetY: 270, speed: 4, damage: 32, range: 125, hp: 350, maxHp: 350, cooldown: 0 };
 
         let selectedTowerType = null;
         let selectedExistingTower = null;
+        let mouseX = 0, mouseY = 0;
+        let globalAnimTimer = 0; // Dùng để tạo animation xoay vòng cho trụ
 
         function selectMap(index) {
             currentMapIndex = index;
@@ -207,7 +223,7 @@
                 if(i === index) {
                     btn.className = "flex-1 py-2 bg-cyan-600 text-white font-bold rounded-lg text-xs border border-cyan-400 shadow";
                 } else {
-                    btn.className = "flex-1 py-2 bg-gray-800 text-gray-300 font-bold rounded-lg text-xs border border-gray-700 hover:bg-gray-700";
+                    btn.className = "flex-1 py-2 bg-slate-800 text-slate-300 font-bold rounded-lg text-xs border border-slate-700 hover:bg-slate-700";
                 }
             }
         }
@@ -217,11 +233,11 @@
             container.innerHTML = '';
             towerTypes.forEach(t => {
                 const btn = document.createElement('div');
-                btn.className = `p-2.5 rounded-xl border border-gray-800 bg-gray-950 cursor-pointer hover:border-cyan-500 transition flex flex-col justify-between`;
+                btn.className = `p-2.5 rounded-xl border border-slate-800 bg-slate-950 cursor-pointer hover:border-cyan-400 transition flex flex-col justify-between`;
                 btn.innerHTML = `
                     <div class="flex items-center gap-2 mb-1">
                         <div class="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-white text-xs shadow-inner" style="background: ${t.color}">⚡</div>
-                        <div class="font-bold text-xs text-gray-200">${t.name}</div>
+                        <div class="font-bold text-xs text-slate-200">${t.name}</div>
                     </div>
                     <div class="text-[11px] text-yellow-400 font-semibold">${t.cost} Vàng</div>
                 `;
@@ -236,15 +252,19 @@
             updateTowerInfoPanel();
         }
 
-        // --- CHO PHÉP ĐẶT TRỤ TỰ DO Ở MỌI NƠI (MIỄN KHÔNG TRÊN ĐƯỜNG ĐI) ---
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            mouseX = e.clientX - rect.left;
+            mouseY = e.clientY - rect.top;
+        });
+
         canvas.addEventListener('click', (e) => {
             if (gameState !== 'playing') return;
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
 
-            // Kiểm tra click vào trụ cũ
-            const clickedTower = towers.find(t => Math.hypot(t.x - x, t.y - y) < 24);
+            const clickedTower = towers.find(t => Math.hypot(t.x - x, t.y - y) < 25);
             if (clickedTower) {
                 selectedExistingTower = clickedTower;
                 selectedTowerType = null;
@@ -252,12 +272,11 @@
                 return;
             }
 
-            // Kiểm tra xem vị trí có nằm trên đường đi của quái không (khoảng cách đến các đoạn đường nhỏ hơn 24px)
             let onPath = false;
             for(let i=0; i<activeMap.waypoints.length - 1; i++) {
                 let p1 = activeMap.waypoints[i];
                 let p2 = activeMap.waypoints[i+1];
-                if (isPointNearSegment(x, y, p1.x, p1.y, p2.x, p2.y, 25)) {
+                if (isPointNearSegment(x, y, p1.x, p1.y, p2.x, p2.y, 26)) {
                     onPath = true;
                     break;
                 }
@@ -270,7 +289,9 @@
                     type: selectedTowerType,
                     level: 1,
                     cooldown: 0,
-                    totalSpent: selectedTowerType.cost
+                    totalSpent: selectedTowerType.cost,
+                    genTimer: 0,
+                    recoil: 0 // Hiệu ứng giật nòng pháo
                 };
                 towers.push(newTower);
 
@@ -282,11 +303,10 @@
                 updateHUD();
                 updateTowerInfoPanel();
                 playSound('gold');
+                createParticles(x, y, '#38bdf8', 12);
             } else if (onPath && selectedTowerType) {
-                // Hiển thị thông báo nhỏ nếu đặt trên đường
-                showFloatingText("Không thể đặt trụ trên đường đi!", x, y, '#ef4444');
+                showFloatingText("Không thể đặt trên đường quái đi!", x, y, '#ef4444');
             } else {
-                // Điều khiển Tướng di chuyển
                 hero.targetX = x;
                 hero.targetY = y;
             }
@@ -309,7 +329,7 @@
                     y: tower.y + 20,
                     baseX: tower.x + (i === 0 ? -18 : 18),
                     baseY: tower.y + 20,
-                    hp: 100, maxHp: 100, damage: 15, speed: 2.2,
+                    hp: 120, maxHp: 120, damage: 16, speed: 2.2,
                     target: null
                 });
             }
@@ -319,20 +339,23 @@
             const panel = document.getElementById('selected-tower-info');
             if (selectedExistingTower) {
                 let lvl = selectedExistingTower.level;
-                let skillDesc = lvl >= 3 ? "<span class='text-yellow-400 font-bold'>✨ Đã kích hoạt Skill Cực Phẩm!</span>" : "Nâng cấp lên Lv.3 để mở khóa Skill đặc biệt.";
+                let tName = selectedExistingTower.type.name;
+                let details = selectedExistingTower.type.id === 'generator' ? 
+                    `Sản xuất: <span class="text-yellow-400 font-bold">+${15 * lvl} Vàng</span> mỗi chu kỳ.` :
+                    `ST: ${selectedExistingTower.type.damage * lvl} | Tầm: ${selectedExistingTower.type.range + lvl*8}`;
+                
                 panel.innerHTML = `
-                    <b class="text-cyan-400">${selectedExistingTower.type.name} (Lv.${lvl})</b><br>
-                    ST: ${selectedExistingTower.type.damage * lvl} | Tầm: ${selectedExistingTower.type.range + lvl*8} | Tốc độ: ${Math.max(10, selectedExistingTower.type.speed - lvl*2)}<br>
-                    <div class="text-[10px] text-gray-300 mt-0.5">${skillDesc}</div>
+                    <b class="text-cyan-400">${tName} (Lv.${lvl})</b><br>
+                    ${details}<br>
                     <div class="mt-1.5 flex gap-2">
                         <button onclick="upgradeTower()" class="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded font-bold text-[10px]">Nâng Cấp (${Math.floor(selectedExistingTower.type.cost * 0.85)})</button>
                         <button onclick="sellTower()" class="px-2.5 py-1 bg-red-600 hover:bg-red-500 text-white rounded font-bold text-[10px]">Bán (+${Math.floor(selectedExistingTower.totalSpent * 0.65)})</button>
                     </div>
                 `;
             } else if (selectedTowerType) {
-                panel.innerHTML = `<b class="text-yellow-400">Đang chọn: ${selectedTowerType.name}</b><br>${selectedTowerType.desc}<br><span class="text-cyan-300">Click vào bãi đất trống bất kỳ để xây.</span>`;
+                panel.innerHTML = `<b class="text-yellow-400">Đang chọn: ${selectedTowerType.name}</b><br>${selectedTowerType.desc}<br><span class="text-cyan-300">Rê chuột xem vòng tầm bắn và click đất trống để đặt.</span>`;
             } else {
-                panel.innerHTML = `Click vào trụ để nâng cấp (tăng sát thương, tầm bắn, tốc độ và skill) hoặc click đất trống để di chuyển Tướng.`;
+                panel.innerHTML = `Click chọn trụ để xem phạm vi, nâng cấp hoặc bán thu hồi tài nguyên.`;
             }
         }
 
@@ -345,7 +368,7 @@
                 selectedExistingTower.totalSpent += cost;
                 updateHUD();
                 updateTowerInfoPanel();
-                createParticles(selectedExistingTower.x, selectedExistingTower.y, '#38bdf8', 15);
+                createParticles(selectedExistingTower.x, selectedExistingTower.y, '#38bdf8', 18);
                 playSound('gold');
             }
         }
@@ -369,15 +392,15 @@
             document.getElementById('wave-val').innerText = `${currentWave}/${maxWaves}`;
         }
 
-        // --- KỸ NĂNG ĐẶC BIỆT TOÀN CỤC ---
+        // --- KỸ NĂNG ---
         function castMeteor() {
             if (gold >= 120) {
                 gold -= 120;
                 updateHUD();
                 playSound('explosion');
                 enemies.forEach(e => {
-                    e.hp -= 160;
-                    createParticles(e.x, e.y, '#f43f5e', 18);
+                    e.hp -= 180;
+                    createParticles(e.x, e.y, '#f43f5e', 20);
                 });
             }
         }
@@ -387,15 +410,14 @@
                 gold -= 100;
                 updateHUD();
                 playSound('tesla');
-                // Sấm sét quét toàn bộ bản đồ giật lan liên tục
                 enemies.forEach(e => {
-                    e.hp -= 90;
-                    createParticles(e.x, e.y, '#eab308', 20);
+                    e.hp -= 100;
+                    createParticles(e.x, e.y, '#a855f7', 22);
                 });
             }
         }
 
-        // --- HỆ THỐNG SINH QUÁI & BOSS ---
+        // --- WAVE & QUÁI ---
         function startNextWave() {
             if (waveInProgress || gameState !== 'playing') return;
             waveInProgress = true;
@@ -406,6 +428,7 @@
             let spawned = 0;
 
             let interval = setInterval(() => {
+                if (gameState !== 'playing') { clearInterval(interval); return; }
                 if (spawned < spawnCount) {
                     let type = 'slime';
                     if (currentWave >= 3 && Math.random() > 0.35) type = 'orc';
@@ -413,21 +436,21 @@
                     if (currentWave >= 9 && Math.random() > 0.7) type = 'dragon';
                     if (currentWave >= 12 && spawned === spawnCount - 1) type = 'boss';
 
-                    let mult = 1 + (currentWave - 1) * 0.4;
+                    let mult = 1 + (currentWave - 1) * 0.42;
                     enemies.push(createEnemy(type, mult));
                     spawned++;
                 } else {
                     clearInterval(interval);
                 }
-            }, 700);
+            }, 650 / gameSpeed);
         }
 
         function createEnemy(type, mult) {
-            let baseHp = 70, speed = 1.9, color = '#22c55e', radius = 11, reward = 15;
-            if (type === 'orc') { baseHp = 170; speed = 1.2; color = '#f97316'; radius = 15; reward = 30; }
-            if (type === 'ghost') { baseHp = 110; speed = 2.4; color = '#06b6d4'; radius = 12; reward = 25; }
-            if (type === 'dragon') { baseHp = 320; speed = 1.5; color = '#ef4444'; radius = 17; reward = 60; }
-            if (type === 'boss') { baseHp = 800; speed = 0.85; color = '#a855f7'; radius = 22; reward = 150; }
+            let baseHp = 75, speed = 1.9, color = '#22c55e', radius = 11, reward = 16;
+            if (type === 'orc') { baseHp = 180; speed = 1.2; color = '#f97316'; radius = 15; reward = 32; }
+            if (type === 'ghost') { baseHp = 120; speed = 2.5; color = '#06b6d4'; radius = 12; reward = 28; }
+            if (type === 'dragon') { baseHp = 350; speed = 1.5; color = '#ef4444'; radius = 17; reward = 65; }
+            if (type === 'boss') { baseHp = 900; speed = 0.85; color = '#a855f7'; radius = 23; reward = 160; }
 
             return {
                 x: activeMap.waypoints[0].x,
@@ -443,15 +466,15 @@
             };
         }
 
-        function createParticles(x, y, color, count = 10) {
+        function createParticles(x, y, color, count = 12) {
             for(let i=0; i<count; i++) {
                 particles.push({
                     x, y,
-                    vx: (Math.random() - 0.5) * 6,
-                    vy: (Math.random() - 0.5) * 6,
+                    vx: (Math.random() - 0.5) * 6.5,
+                    vy: (Math.random() - 0.5) * 6.5,
                     alpha: 1,
                     color,
-                    size: Math.random() * 3.5 + 2
+                    size: Math.random() * 4 + 2
                 });
             }
         }
@@ -462,223 +485,247 @@
             });
         }
 
-        // --- GAME LOOP ---
+        // --- GAME LOOP (Áp dụng gameSpeed cho x2) ---
         function update() {
             if (gameState !== 'playing') return;
 
-            // 1. Cập nhật Tướng Hero & Sét lan đặc biệt
-            let hdx = hero.targetX - hero.x;
-            let hdy = hero.targetY - hero.y;
-            let hdist = Math.hypot(hdx, hdy);
-            if (hdist > hero.speed) {
-                hero.x += (hdx / hdist) * hero.speed;
-                hero.y += (hdy / hdist) * hero.speed;
-            }
+            let loops = gameSpeed; // Nếu x2 thì chạy update 2 lần mỗi frame
+            for (let l = 0; l < loops; l++) {
+                globalAnimTimer += 0.05;
 
-            hero.cooldown--;
-            if (hero.cooldown <= 0) {
-                let target = enemies.find(e => Math.hypot(e.x - hero.x, e.y - hero.y) <= hero.range);
-                if (target) {
-                    target.hp -= hero.damage;
-                    playSound('tesla');
-                    // Tướng phóng sét giật lan sang quái gần đó
-                    let chainTargets = enemies.filter(e => e !== target && Math.hypot(e.x - target.x, e.y - target.y) < 90).slice(0, 2);
-                    chainTargets.forEach(ct => {
-                        ct.hp -= hero.damage * 0.6;
-                        projectiles.push({ x: target.x, y: target.y, target: ct, damage: 0, speed: 12, color: '#eab308', isLightning: true });
-                    });
-
-                    projectiles.push({ x: hero.x, y: hero.y, target: target, damage: hero.damage, speed: 9, color: '#38bdf8' });
-                    hero.cooldown = 25;
+                // 1. Hero
+                let hdx = hero.targetX - hero.x;
+                let hdy = hero.targetY - hero.y;
+                let hdist = Math.hypot(hdx, hdy);
+                if (hdist > hero.speed) {
+                    hero.x += (hdx / hdist) * hero.speed;
+                    hero.y += (hdy / hdist) * hero.speed;
                 }
-            }
 
-            // 2. Cập nhật lính Barracks
-            soldiers.forEach(s => {
-                if (s.target && s.target.hp > 0) {
-                    let sdx = s.target.x - s.x;
-                    let sdy = s.target.y - s.y;
-                    let sdist = Math.hypot(sdx, sdy);
-                    if (sdist < 16) {
-                        s.target.hp -= 0.8;
-                    } else {
-                        s.x += (sdx / sdist) * s.speed;
-                        s.y += (sdy / sdist) * s.speed;
+                hero.cooldown--;
+                if (hero.cooldown <= 0) {
+                    let target = enemies.find(e => Math.hypot(e.x - hero.x, e.y - hero.y) <= hero.range);
+                    if (target) {
+                        target.hp -= hero.damage;
+                        playSound('tesla');
+                        let chain = enemies.filter(e => e !== target && Math.hypot(e.x - target.x, e.y - target.y) < 100).slice(0, 2);
+                        chain.forEach(ct => {
+                            ct.hp -= hero.damage * 0.6;
+                            projectiles.push({ x: target.x, y: target.y, target: ct, damage: 0, speed: 14, color: '#38bdf8', isLightning: true });
+                        });
+                        projectiles.push({ x: hero.x, y: hero.y, target: target, damage: hero.damage, speed: 10, color: '#38bdf8' });
+                        hero.cooldown = 24;
                     }
-                } else {
-                    let nearby = enemies.find(e => Math.hypot(e.x - s.baseX, e.y - s.baseY) < 90);
-                    if (nearby) {
-                        s.target = nearby;
+                }
+
+                // 2. Lính Barracks
+                soldiers.forEach(s => {
+                    if (s.target && s.target.hp > 0) {
+                        let sdx = s.target.x - s.x;
+                        let sdy = s.target.y - s.y;
+                        let sdist = Math.hypot(sdx, sdy);
+                        if (sdist < 16) {
+                            s.target.hp -= 0.9;
+                        } else {
+                            s.x += (sdx / sdist) * s.speed;
+                            s.y += (sdy / sdist) * s.speed;
+                        }
                     } else {
-                        let bdx = s.baseX - s.x;
-                        let bdy = s.baseY - s.y;
-                        let bdist = Math.hypot(bdx, bdy);
-                        if (bdist > 2) {
-                            s.x += (bdx / bdist) * s.speed;
-                            s.y += (bdy / bdist) * s.speed;
+                        let nearby = enemies.find(e => Math.hypot(e.x - s.baseX, e.y - s.baseY) < 95);
+                        if (nearby) {
+                            s.target = nearby;
+                        } else {
+                            let bdx = s.baseX - s.x;
+                            let bdy = s.baseY - s.y;
+                            let bdist = Math.hypot(bdx, bdy);
+                            if (bdist > 2) {
+                                s.x += (bdx / bdist) * s.speed;
+                                s.y += (bdy / bdist) * s.speed;
+                            }
                         }
                     }
-                }
-            });
+                });
 
-            // 3. Cập nhật Quái vật
-            for (let i = enemies.length - 1; i >= 0; i--) {
-                let e = enemies[i];
-                let targetWp = activeMap.waypoints[e.wpIndex];
-                if (!targetWp) continue;
+                // 3. Quái
+                for (let i = enemies.length - 1; i >= 0; i--) {
+                    let e = enemies[i];
+                    let targetWp = activeMap.waypoints[e.wpIndex];
+                    if (!targetWp) continue;
 
-                let dx = targetWp.x - e.x;
-                let dy = targetWp.y - e.y;
-                let dist = Math.hypot(dx, dy);
+                    let dx = targetWp.x - e.x;
+                    let dy = targetWp.y - e.y;
+                    let dist = Math.hypot(dx, dy);
 
-                let currentSpeed = e.speed;
-                if (e.slowTimer > 0) { currentSpeed *= 0.45; e.slowTimer--; }
+                    let currentSpeed = e.speed;
+                    if (e.slowTimer > 0) { currentSpeed *= 0.45; e.slowTimer--; }
 
-                if (dist < currentSpeed) {
-                    e.x = targetWp.x;
-                    e.y = targetWp.y;
-                    e.wpIndex++;
-                    if (e.wpIndex >= activeMap.waypoints.length) {
-                        hp--;
+                    if (dist < currentSpeed) {
+                        e.x = targetWp.x;
+                        e.y = targetWp.y;
+                        e.wpIndex++;
+                        if (e.wpIndex >= activeMap.waypoints.length) {
+                            hp--;
+                            enemies.splice(i, 1);
+                            updateHUD();
+                            playSound('explosion');
+                            if (hp <= 0) triggerGameOver(false);
+                            continue;
+                        }
+                    } else {
+                        e.x += (dx / dist) * currentSpeed;
+                        e.y += (dy / dist) * currentSpeed;
+                    }
+
+                    if (e.hp <= 0) {
+                        gold += e.reward;
+                        createParticles(e.x, e.y, e.color, 16);
+                        playSound('gold');
                         enemies.splice(i, 1);
                         updateHUD();
-                        playSound('explosion');
-                        if (hp <= 0) triggerGameOver(false);
+                    }
+                }
+
+                if (waveInProgress && enemies.length === 0) {
+                    waveInProgress = false;
+                    if (currentWave >= maxWaves) {
+                        triggerGameOver(true);
+                    } else {
+                        currentWave++;
+                        const btn = document.getElementById('next-wave-btn');
+                        btn.innerText = `GỌI ĐỢT QUÁI (WAVE ${currentWave})`;
+                        btn.disabled = false;
+                        updateHUD();
+                    }
+                }
+
+                // 4. Trụ & Máy tạo vàng
+                towers.forEach(t => {
+                    if (t.recoil > 0) t.recoil--;
+
+                    if (t.type.id === 'generator') {
+                        t.genTimer++;
+                        let interval = Math.max(60, 180 - t.level * 25);
+                        if (t.genTimer >= interval) {
+                            t.genTimer = 0;
+                            let generated = 12 * t.level;
+                            gold += generated;
+                            updateHUD();
+                            showFloatingText(`+${generated}💰`, t.x, t.y - 15, '#eab308');
+                            createParticles(t.x, t.y, '#eab308', 6);
+                        }
+                        return;
+                    }
+
+                    if (t.type.id === 'barracks') return;
+
+                    t.cooldown--;
+                    if (t.cooldown <= 0) {
+                        let range = t.type.range + t.level * 8;
+                        let target = enemies.find(e => Math.hypot(e.x - t.x, e.y - t.y) <= range);
+                        if (target) {
+                            t.recoil = 6; // Hiệu ứng giật nòng
+                            let damage = t.type.damage * t.level;
+
+                            if (t.type.id === 'archer') {
+                                playSound('shoot');
+                                if (t.level >= 3) {
+                                    for(let offset of [-15, 0, 15]) {
+                                        projectiles.push({ x: t.x, y: t.y, target: target, damage: damage * 0.5, speed: 12, color: '#38bdf8' });
+                                    }
+                                } else {
+                                    projectiles.push({ x: t.x, y: t.y, target: target, damage: damage, speed: 12, color: '#38bdf8' });
+                                }
+                            } else if (t.type.id === 'cannon') {
+                                playSound('explosion');
+                                projectiles.push({ x: t.x, y: t.y, target: target, damage: damage, speed: 7, color: '#f43f5e', isCannon: true, aoe: t.level >= 3 ? 95 : 65 });
+                            } else if (t.type.id === 'tesla') {
+                                playSound('tesla');
+                                target.hp -= damage;
+                                let chain = enemies.filter(e => e !== target && Math.hypot(e.x - target.x, e.y - target.y) < 120).slice(0, t.level >= 3 ? 4 : 2);
+                                chain.forEach(ct => { ct.hp -= damage * 0.7; createParticles(ct.x, ct.y, '#a855f7', 10); });
+                                createParticles(target.x, target.y, '#a855f7', 14);
+                            }
+
+                            t.cooldown = Math.max(12, t.type.speed - t.level * 3);
+                        }
+                    }
+                });
+
+                // 5. Đạn
+                for (let i = projectiles.length - 1; i >= 0; i--) {
+                    let p = projectiles[i];
+                    if (!p.target || p.target.hp <= 0) {
+                        projectiles.splice(i, 1);
                         continue;
                     }
-                } else {
-                    e.x += (dx / dist) * currentSpeed;
-                    e.y += (dy / dist) * currentSpeed;
-                }
 
-                if (e.hp <= 0) {
-                    gold += e.reward;
-                    createParticles(e.x, e.y, e.color, 14);
-                    playSound('gold');
-                    enemies.splice(i, 1);
-                    updateHUD();
-                }
-            }
+                    let dx = p.target.x - p.x;
+                    let dy = p.target.y - p.y;
+                    let dist = Math.hypot(dx, dy);
 
-            // Hoàn thành Wave
-            if (waveInProgress && enemies.length === 0) {
-                waveInProgress = false;
-                if (currentWave >= maxWaves) {
-                    triggerGameOver(true);
-                } else {
-                    currentWave++;
-                    const btn = document.getElementById('next-wave-btn');
-                    btn.innerText = `GỌI ĐỢT QUÁI (WAVE ${currentWave})`;
-                    btn.disabled = false;
-                    updateHUD();
-                }
-            }
-
-            // 4. Cập nhật Trụ Phòng Thủ & Skill Nâng Cấp (Lv.3+)
-            towers.forEach(t => {
-                if(t.type.id === 'barracks') return;
-                t.cooldown--;
-                if (t.cooldown <= 0) {
-                    let range = t.type.range + t.level * 8;
-                    let target = enemies.find(e => Math.hypot(e.x - t.x, e.y - t.y) <= range);
-                    if (target) {
-                        let damage = t.type.damage * t.level;
-                        let speed = 8;
-
-                        if (t.type.id === 'archer') {
-                            playSound('shoot');
-                            // Cung cấp Lv.3+ bắn 3 mũi tên
-                            if (t.level >= 3) {
-                                for(let offset of [-15, 0, 15]) {
-                                    projectiles.push({ x: t.x, y: t.y, target: target, damage: damage * 0.5, speed: 10, color: t.type.color });
+                    if (dist < p.speed) {
+                        if (p.isCannon) {
+                            enemies.forEach(e => {
+                                if (Math.hypot(e.x - p.target.x, e.y - p.target.y) <= p.aoe) {
+                                    e.hp -= p.damage;
                                 }
-                            } else {
-                                projectiles.push({ x: t.x, y: t.y, target: target, damage: damage, speed: 10, color: t.type.color });
-                            }
-                        } else if (t.type.id === 'cannon') {
-                            playSound('explosion');
-                            // Pháo Lv.3+ tạo vùng nổ AoE cực lớn
-                            projectiles.push({ x: t.x, y: t.y, target: target, damage: damage, speed: 6, color: t.type.color, isCannon: true, aoe: t.level >= 3 ? 90 : 60 });
-                        } else if (t.type.id === 'tesla') {
-                            playSound('tesla');
-                            // Trụ Lôi Điện giật lan truyền qua nhiều mục tiêu
-                            target.hp -= damage;
-                            let chain = enemies.filter(e => e !== target && Math.hypot(e.x - target.x, e.y - target.y) < 110).slice(0, t.level >= 3 ? 4 : 2);
-                            chain.forEach(ct => { ct.hp -= damage * 0.7; createParticles(ct.x, ct.y, '#eab308', 8); });
-                            createParticles(target.x, target.y, '#eab308', 12);
-                        } else if (t.type.id === 'mage') {
-                            playSound('shoot');
-                            projectiles.push({ x: t.x, y: t.y, target: target, damage: damage, speed: 7, color: t.type.color, isMage: true });
+                            });
+                            createParticles(p.target.x, p.target.y, '#f43f5e', 25);
+                        } else {
+                            p.target.hp -= p.damage;
+                            createParticles(p.target.x, p.target.y, p.color, 8);
                         }
-
-                        t.cooldown = Math.max(12, t.type.speed - t.level * 3);
-                    }
-                }
-            });
-
-            // 5. Cập nhật Đạn bay & Hiệu ứng nổ AoE
-            for (let i = projectiles.length - 1; i >= 0; i--) {
-                let p = projectiles[i];
-                if (!p.target || p.target.hp <= 0) {
-                    projectiles.splice(i, 1);
-                    continue;
-                }
-
-                let dx = p.target.x - p.x;
-                let dy = p.target.y - p.y;
-                let dist = Math.hypot(dx, dy);
-
-                if (dist < p.speed) {
-                    if (p.isCannon) {
-                        // Nổ diện rộng AoE
-                        enemies.forEach(e => {
-                            if (Math.hypot(e.x - p.target.x, e.y - p.target.y) <= p.aoe) {
-                                e.hp -= p.damage;
-                            }
-                        });
-                        createParticles(p.target.x, p.target.y, '#f43f5e', 22);
+                        projectiles.splice(i, 1);
                     } else {
-                        p.target.hp -= p.damage;
-                        if (p.isMage) p.target.slowTimer = 120;
-                        createParticles(p.target.x, p.target.y, p.color, 6);
+                        p.x += (dx / dist) * p.speed;
+                        p.y += (dy / dist) * p.speed;
                     }
-                    projectiles.splice(i, 1);
-                } else {
-                    p.x += (dx / dist) * p.speed;
-                    p.y += (dy / dist) * p.speed;
                 }
-            }
 
-            // 6. Hạt hiệu ứng
-            for (let i = particles.length - 1; i >= 0; i--) {
-                let pt = particles[i];
-                pt.x += pt.vx;
-                pt.y += pt.vy;
-                pt.alpha -= 0.025;
-                if (pt.alpha <= 0) particles.splice(i, 1);
+                // 6. Hạt
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    let pt = particles[i];
+                    pt.x += pt.vx;
+                    pt.y += pt.vy;
+                    pt.alpha -= 0.025;
+                    if (pt.alpha <= 0) particles.splice(i, 1);
+                }
             }
         }
 
-        // --- VẼ ĐỒ HỌA ---
+        // --- VẼ ĐỒ HỌA CHI TIẾT ---
         function draw() {
             ctx.fillStyle = activeMap.bg;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 1. Vẽ Đường đi của quái
+            // 1. Đường đi
             ctx.beginPath();
             ctx.moveTo(activeMap.waypoints[0].x, activeMap.waypoints[0].y);
             for (let i = 1; i < activeMap.waypoints.length; i++) {
                 ctx.lineTo(activeMap.waypoints[i].x, activeMap.waypoints[i].y);
             }
             ctx.strokeStyle = activeMap.pathColor;
-            ctx.lineWidth = 38;
+            ctx.lineWidth = 40;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             ctx.stroke();
 
-            // 2. Vẽ Trụ Phòng Thủ
+            // 2. Phạm vi trước khi đặt
+            if (selectedTowerType && selectedTowerType.range > 0) {
+                ctx.beginPath();
+                ctx.arc(mouseX, mouseY, selectedTowerType.range, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(56, 189, 248, 0.12)';
+                ctx.fill();
+                ctx.strokeStyle = '#38bdf8';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([6, 6]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // 3. Trụ & Máy móc (ĐỒ HỌA CHI TIẾT CAO)
             towers.forEach(t => {
-                if (selectedExistingTower === t) {
+                if (selectedExistingTower === t && t.type.range > 0) {
                     ctx.beginPath();
                     ctx.arc(t.x, t.y, t.type.range + t.level * 8, 0, Math.PI * 2);
                     ctx.fillStyle = 'rgba(56, 189, 248, 0.08)';
@@ -688,21 +735,53 @@
                     ctx.stroke();
                 }
 
+                // Đế trụ bọc thép
                 ctx.beginPath();
                 ctx.arc(t.x, t.y, 22, 0, Math.PI * 2);
-                ctx.fillStyle = t.type.color;
+                ctx.fillStyle = '#0f172a';
                 ctx.fill();
                 ctx.lineWidth = 3;
-                ctx.strokeStyle = '#ffffff';
+                ctx.strokeStyle = t.type.color;
                 ctx.stroke();
 
+                // Chi tiết lõi trụ theo loại
+                if (t.type.id === 'generator') {
+                    // Lò phản ứng vàng xoay
+                    ctx.save();
+                    ctx.translate(t.x, t.y);
+                    ctx.rotate(globalAnimTimer);
+                    ctx.fillStyle = '#eab308';
+                    ctx.fillRect(-8, -8, 16, 16);
+                    ctx.restore();
+                } else if (t.type.id === 'archer') {
+                    // Nòng cung laser
+                    ctx.fillStyle = '#38bdf8';
+                    ctx.fillRect(t.x - 4, t.y - 12 - (t.recoil || 0), 8, 18);
+                } else if (t.type.id === 'cannon') {
+                    // Đại bác pháo bọc thép
+                    ctx.fillStyle = '#f43f5e';
+                    ctx.fillRect(t.x - 6, t.y - 16 - (t.recoil || 0), 12, 20);
+                } else if (t.type.id === 'tesla') {
+                    // Cột Tesla phóng điện
+                    ctx.beginPath();
+                    ctx.arc(t.x, t.y, 10 + Math.sin(globalAnimTimer*5)*2, 0, Math.PI*2);
+                    ctx.fillStyle = '#a855f7';
+                    ctx.fill();
+                } else {
+                    ctx.fillStyle = t.type.color;
+                    ctx.beginPath();
+                    ctx.arc(t.x, t.y, 10, 0, Math.PI*2);
+                    ctx.fill();
+                }
+
+                // Hiển thị cấp độ
                 ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 11px sans-serif';
+                ctx.font = 'bold 10px sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(`Lv.${t.level}`, t.x, t.y + 30);
+                ctx.fillText(`Lv.${t.level}`, t.x, t.y + 32);
             });
 
-            // 3. Vẽ Lính Barracks
+            // 4. Lính
             soldiers.forEach(s => {
                 ctx.beginPath();
                 ctx.arc(s.x, s.y, 8, 0, Math.PI * 2);
@@ -713,47 +792,47 @@
                 ctx.stroke();
             });
 
-            // 4. Vẽ Tướng Hero
+            // 5. Tướng
             ctx.beginPath();
-            ctx.arc(hero.x, hero.y, 15, 0, Math.PI * 2);
+            ctx.arc(hero.x, hero.y, 16, 0, Math.PI * 2);
             ctx.fillStyle = '#0ea5e9';
             ctx.fill();
             ctx.lineWidth = 3;
             ctx.strokeStyle = '#ffffff';
             ctx.stroke();
 
-            // 5. Vẽ Quái Vật & Thanh máu
+            // 6. Quái & Thanh máu
             enemies.forEach(e => {
                 ctx.beginPath();
                 ctx.arc(e.x, e.y, e.radius, 0, Math.PI * 2);
                 ctx.fillStyle = e.color;
                 ctx.fill();
                 ctx.lineWidth = 2;
-                ctx.strokeStyle = '#030712';
+                ctx.strokeStyle = '#020617';
                 ctx.stroke();
 
-                let barW = 28;
+                let barW = 30;
                 let barH = 4;
                 ctx.fillStyle = '#ef4444';
-                ctx.fillRect(e.x - barW/2, e.y - e.radius - 8, barW, barH);
+                ctx.fillRect(e.x - barW/2, e.y - e.radius - 9, barW, barH);
                 ctx.fillStyle = '#22c55e';
-                ctx.fillRect(e.x - barW/2, e.y - e.radius - 8, barW * Math.max(0, e.hp / e.maxHp), barH);
+                ctx.fillRect(e.x - barW/2, e.y - e.radius - 9, barW * Math.max(0, e.hp / e.maxHp), barH);
             });
 
-            // 6. Vẽ Đạn
+            // 7. Đạn
             projectiles.forEach(p => {
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, p.isCannon ? 6 : 4, 0, Math.PI * 2);
+                ctx.arc(p.x, p.y, p.isCannon ? 7 : 4.5, 0, Math.PI * 2);
                 ctx.fillStyle = p.color;
                 ctx.fill();
             });
 
-            // 7. Vẽ Hạt & Floating Text
+            // 8. Hạt & Floating Text
             particles.forEach(pt => {
                 ctx.save();
                 ctx.globalAlpha = pt.alpha;
                 if (pt.text) {
-                    ctx.font = 'bold 12px sans-serif';
+                    ctx.font = 'bold 13px sans-serif';
                     ctx.fillStyle = pt.color;
                     ctx.textAlign = 'center';
                     ctx.fillText(pt.text, pt.x, pt.y);
@@ -775,18 +854,18 @@
 
             overlay.classList.remove('hidden');
             if (isWin) {
-                title.innerText = "CHIẾN THẮNG HUY HOÀNG!";
+                title.innerText = "CHIẾN THẮNG TUYỆT ĐỐI!";
                 title.className = "text-4xl font-extrabold mb-3 text-green-400";
-                desc.innerText = "Bạn đã bảo vệ thành công toàn bộ hệ thống phòng thủ vũ trụ!";
+                desc.innerText = "Bạn đã vận hành hệ thống phòng thủ hoàn hảo!";
             } else {
                 title.innerText = "PHÒNG TUYẾN THẤT THỦ!";
                 title.className = "text-4xl font-extrabold mb-3 text-red-500";
-                desc.innerText = "Lõi năng lượng đã bị phá hủy. Hãy thử chiến thuật sắp xếp khác nhé!";
+                desc.innerText = "Kẻ thù đã áp đảo. Hãy thử lại với chiến thuật x2 tốc độ nhé!";
             }
         }
 
         function startGame() {
-            gold = 700;
+            gold = 800;
             hp = 20;
             currentWave = 1;
             waveInProgress = false;
