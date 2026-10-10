@@ -3,155 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Epic Realm Defense - Ultimate Tower Defense</title>
+    <title>CyberRealm TD - Ultimate Tower Defense</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #07090e; color: #f3f4f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; overflow: hidden; }
-        canvas { box-shadow: 0 0 40px rgba(14, 165, 233, 0.4); border-radius: 12px; background: #0f172a; }
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        body { background: #050814; color: #f3f4f6; font-family: 'Segoe UI', system-ui, sans-serif; user-select: none; overflow: hidden; }
+        canvas { box-shadow: 0 0 40px rgba(59, 130, 246, 0.4); border-radius: 12px; background: #0b1329; cursor: crosshair; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 3px; }
     </style>
 </head>
-<body class="flex flex-col items-center justify-center h-screen p-2">
+<body class="flex flex-col h-screen p-2 justify-between">
 
-    <!-- TOP HUD BAR -->
-    <header class="w-full max-w-6xl flex justify-between items-center mb-2 bg-slate-900/90 backdrop-blur px-6 py-3 rounded-xl border border-slate-800 shadow-xl">
+    <!-- HEADER / HUD -->
+    <header class="w-full max-w-7xl mx-auto flex justify-between items-center bg-gray-900/90 backdrop-blur px-4 py-2 rounded-xl border border-gray-800 shadow-xl">
         <div class="flex items-center gap-3">
-            <div class="bg-gradient-to-tr from-cyan-500 to-blue-600 p-2.5 rounded-xl shadow-lg font-black text-xl">🛡️</div>
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-black text-xl shadow-lg">🛡️</div>
             <div>
-                <h1 class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400">EPIC REALM DEFENSE</h1>
-                <p class="text-xs text-slate-400">Chủ đề: Cổ Thành Ánh Sáng | Bản đồ: Đất Thánh</p>
+                <h1 class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-indigo-400">CYBER REALM TD</h1>
+                <p class="text-[10px] text-gray-400">Ultimate Edition - MultiMap & Hero System</p>
             </div>
         </div>
         <div class="flex gap-4 text-sm font-semibold">
-            <div class="bg-slate-800/80 px-4 py-2 rounded-lg border border-slate-700 flex items-center gap-2">
-                <span>💰 Vàng:</span> <span id="gold-val" class="text-yellow-400 text-base font-bold">650</span>
+            <div class="bg-gray-800/80 px-3 py-1.5 rounded-lg border border-gray-700 flex items-center gap-2">
+                <span>🗺️ Bản Đồ:</span> <span id="map-name" class="text-cyan-400 font-bold">Thảo Nguyên Xanh</span>
             </div>
-            <div class="bg-slate-800/80 px-4 py-2 rounded-lg border border-slate-700 flex items-center gap-2">
-                <span>❤️ Máu Thành:</span> <span id="hp-val" class="text-rose-400 text-base font-bold">20</span>
+            <div class="bg-gray-800/80 px-3 py-1.5 rounded-lg border border-gray-700 flex items-center gap-2">
+                <span>💰 Vàng:</span> <span id="gold-val" class="text-yellow-400 text-lg font-bold">600</span>
             </div>
-            <div class="bg-slate-800/80 px-4 py-2 rounded-lg border border-slate-700 flex items-center gap-2">
-                <span>⚔️ Đợt Quái:</span> <span id="wave-val" class="text-cyan-400 text-base font-bold">1 / 10</span>
+            <div class="bg-gray-800/80 px-3 py-1.5 rounded-lg border border-gray-700 flex items-center gap-2">
+                <span>❤️ Mạng:</span> <span id="hp-val" class="text-red-400 text-lg font-bold">20</span>
             </div>
-            <div class="bg-slate-800/80 px-4 py-2 rounded-lg border border-slate-700 flex items-center gap-2">
-                <span>💎 Điểm:</span> <span id="score-val" class="text-emerald-400 text-base font-bold">0</span>
+            <div class="bg-gray-800/80 px-3 py-1.5 rounded-lg border border-gray-700 flex items-center gap-2">
+                <span>🌊 Đợt:</span> <span id="wave-val" class="text-indigo-400 text-lg font-bold">1/15</span>
             </div>
         </div>
     </header>
 
-    <!-- MAIN GAME LAYOUT -->
-    <div class="flex gap-4 w-full max-w-6xl h-[78vh]">
-        
-        <!-- GAME CANVAS SCREEN -->
-        <div class="relative flex-1 flex items-center justify-center bg-slate-950/50 rounded-2xl border border-slate-800 overflow-hidden">
-            <canvas id="gameCanvas" width="900" height="560"></canvas>
+    <!-- MAIN CONTAINER -->
+    <div class="flex gap-3 w-full max-w-7xl mx-auto flex-1 items-center justify-center">
+        <!-- CANVAS GAME SCREEN -->
+        <div class="relative flex flex-col items-center">
+            <canvas id="gameCanvas" width="960" height="560"></canvas>
             
-            <!-- OVERLAY (VICTORY / DEFEAT) -->
-            <div id="game-overlay" class="absolute inset-0 bg-slate-950/85 backdrop-blur-md flex flex-col items-center justify-center hidden rounded-2xl z-20">
-                <h2 id="overlay-title" class="text-5xl font-black mb-3 text-cyan-400 tracking-wider">CHIẾN THẮNG!</h2>
-                <p id="overlay-desc" class="text-slate-300 mb-6 text-base">Vương quốc đã được bảo vệ hoàn toàn khỏi bóng tối.</p>
-                <button onclick="restartGame()" class="px-8 py-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold rounded-xl shadow-xl transition transform hover:scale-105">Chơi Lại Ván Mới</button>
+            <!-- OVERLAY MENU / WIN / GAMEOVER -->
+            <div id="game-overlay" class="absolute inset-0 bg-black/85 backdrop-blur-md flex flex-col items-center justify-center rounded-xl z-20">
+                <h2 id="overlay-title" class="text-4xl font-extrabold mb-3 text-cyan-400 drop-shadow">CYBER REALM TD</h2>
+                <p id="overlay-desc" class="text-gray-300 mb-6 text-center max-w-md text-sm">Hệ thống phòng thủ tối tân đã sẵn sàng. Hãy chọn bản đồ và bắt đầu chiến dịch bảo vệ lõi nhân loại!</p>
+                
+                <div class="flex flex-col gap-3 w-72">
+                    <div class="flex gap-2">
+                        <button onclick="selectMap(0)" id="map-btn-0" class="flex-1 py-2 bg-cyan-600 text-white font-bold rounded-lg text-xs border border-cyan-400 shadow">Thảo Nguyên</button>
+                        <button onclick="selectMap(1)" id="map-btn-1" class="flex-1 py-2 bg-gray-800 text-gray-300 font-bold rounded-lg text-xs border border-gray-700 hover:bg-gray-700">Sa Mạc</button>
+                        <button onclick="selectMap(2)" id="map-btn-2" class="flex-1 py-2 bg-gray-800 text-gray-300 font-bold rounded-lg text-xs border border-gray-700 hover:bg-gray-700">Băng Giá</button>
+                    </div>
+                    <button onclick="startGame()" class="py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-extrabold rounded-xl shadow-lg transition transform hover:scale-105">BẮT ĐẦU CHIẾN DỊCH</button>
+                </div>
             </div>
         </div>
 
-        <!-- CONTROL & BUILD SIDEBAR -->
-        <div class="w-80 bg-slate-900/90 backdrop-blur rounded-2xl border border-slate-800 p-4 flex flex-col justify-between shadow-xl">
-            <div>
-                <h3 class="text-sm font-bold text-slate-300 mb-3 uppercase tracking-wider border-b border-slate-800 pb-2">Kho Vũ Khí & Trụ Phòng Thủ</h3>
-                <div id="tower-selector" class="grid grid-cols-2 gap-2.5">
-                    <!-- Dynamic Tower Buttons -->
+        <!-- CONTROL SIDEBAR -->
+        <div class="w-80 bg-gray-900/90 backdrop-blur p-4 rounded-xl border border-gray-800 flex flex-col justify-between h-[560px] shadow-xl">
+            <div class="flex flex-col gap-3 overflow-y-auto pr-1">
+                <h3 class="text-sm font-bold text-gray-300 border-b border-gray-800 pb-1.5 flex justify-between items-center">
+                    <span>⚡ KHO VŨ KHÍ & TRỤ</span>
+                    <span class="text-[10px] text-cyan-400 font-normal">Click bản đồ để đặt</span>
+                </h3>
+                <div id="tower-selector" class="grid grid-cols-2 gap-2">
+                    <!-- Tạo động bằng JS -->
+                </div>
+
+                <div class="mt-2 border-t border-gray-800 pt-2">
+                    <h3 class="text-xs font-bold text-gray-400 mb-2">✨ KỸ NĂNG TƯỚNG & PHÉP</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="castMeteor()" class="p-2 bg-rose-950/80 hover:bg-rose-900 border border-rose-700 rounded-lg text-left transition flex flex-col justify-between">
+                            <span class="text-xs font-bold text-rose-300">☄️ Thiên Thạch</span>
+                            <span class="text-[10px] text-yellow-400 font-semibold mt-1">100 Vàng</span>
+                        </button>
+                        <button onclick="castBlink()" class="p-2 bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700 rounded-lg text-left transition flex flex-col justify-between">
+                            <span class="text-xs font-bold text-indigo-300">⚡ Dịch Chuyển</span>
+                            <span class="text-[10px] text-cyan-400 font-semibold mt-1">Tướng (0đ)</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <!-- TOWER / HERO INFO PANEL -->
-            <div class="mt-3 flex flex-col gap-3">
-                <div id="selected-info" class="text-xs text-slate-400 bg-slate-950/80 p-3 rounded-xl border border-slate-800 min-h-[90px] flex flex-col justify-center">
-                    <span class="text-slate-500 italic">Click vào trụ trên bản đồ để nâng cấp/bán, hoặc chọn trụ ở trên để xây dựng.</span>
+            <div class="mt-3 pt-3 border-t border-gray-800 flex flex-col gap-2.5">
+                <div id="selected-tower-info" class="text-[11px] text-gray-300 bg-gray-950/80 p-2.5 rounded-lg border border-gray-800 min-h-[75px]">
+                    Chọn một trụ trên bản đồ để xem thông tin, nâng cấp sức mạnh hoặc bán thu hồi tài nguyên.
                 </div>
-
-                <!-- GLOBAL SKILLS / HERO ABILITIES -->
-                <div class="grid grid-cols-2 gap-2">
-                    <button onclick="castMeteor()" class="py-2.5 px-3 bg-gradient-to-r from-rose-600 to-orange-600 hover:from-rose-500 hover:to-orange-500 rounded-xl font-bold text-xs text-white shadow-lg transition flex items-center justify-center gap-1.5">
-                        🔥 Mưa Sao Băng
-                    </button>
-                    <button onclick="castReinforcement()" class="py-2.5 px-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 rounded-xl font-bold text-xs text-white shadow-lg transition flex items-center justify-center gap-1.5">
-                        🛡️ Viện Binh
-                    </button>
-                </div>
-
-                <!-- WAVE START BUTTON -->
-                <button id="next-wave-btn" onclick="startNextWave()" class="w-full py-3.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold rounded-xl shadow-lg transition transform active:scale-95">
-                    🚀 BẮT ĐẦU ĐỢT QUÁI (WAVE 1)
-                </button>
+                <button id="next-wave-btn" onclick="startNextWave()" class="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-extrabold rounded-xl shadow-lg transition text-sm">GỌI ĐỢT QUÁI (WAVE 1)</button>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPT ENGINE -->
+    <!-- GAME SCRIPT -->
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Bản đồ đường đi phức tạp (Waypoints)
-        const waypoints = [
-            { x: 0, y: 140 },
-            { x: 180, y: 140 },
-            { x: 180, y: 400 },
-            { x: 420, y: 400 },
-            { x: 420, y: 160 },
-            { x: 680, y: 160 },
-            { x: 680, y: 450 },
-            { x: 920, y: 450 }
+        // --- CẤU HÌNH BẢN ĐỒ & ĐƯỜNG ĐI ---
+        const maps = [
+            {
+                name: "Thảo Nguyên Xanh",
+                bg: "#0d1b2a",
+                pathColor: "#1b263b",
+                waypoints: [{x:0, y:120}, {x:240, y:120}, {x:240, y:400}, {x:520, y:400}, {x:520, y:140}, {x:760, y:140}, {x:760, y:460}, {x:960, y:460}],
+                buildSpots: [{x:140, y:70}, {x:340, y:170}, {x:140, y:450}, {x:410, y:330}, {x:620, y:90}, {x:620, y:210}, {x:860, y:410}, {x:860, y:510}]
+            },
+            {
+                name: "Sa Mạc Cháy",
+                bg: "#1c1408",
+                pathColor: "#2c200c",
+                waypoints: [{x:0, y:480}, {x:180, y:480}, {x:180, y:160}, {x:480, y:160}, {x:480, y:420}, {x:780, y:420}, {x:780, y:100}, {x:960, y:100}],
+                buildSpots: [{x:90, y:420}, {x:90, y:530}, {x:320, y:210}, {x:320, y:110}, {x:620, y:480}, {x:620, y:360}, {x:860, y:160}, {x:860, y:50}]
+            },
+            {
+                name: "Vương Quốc Băng",
+                bg: "#0a192f",
+                pathColor: "#112240",
+                waypoints: [{x:480, y:0}, {x:480, y:180}, {x:200, y:180}, {x:200, y:380}, {x:760, y:380}, {x:760, y:560}],
+                buildSpots: [{x:360, y:90}, {x:600, y:90}, {x:100, y:240}, {x:320, y:280}, {x:640, y:280}, {x:860, y:320}, {x:640, y:460}]
+            }
         ];
 
-        // Danh sách vị trí xây dựng cố định (Building Slots)
-        const buildSlots = [
-            { x: 100, y: 80, occupied: false },
-            { x: 260, y: 80, occupied: false },
-            { x: 100, y: 460, occupied: false },
-            { x: 300, y: 320, occupied: false },
-            { x: 500, y: 80, occupied: false },
-            { x: 500, y: 260, occupied: false },
-            { x: 600, y: 380, occupied: false },
-            { x: 780, y: 100, occupied: false },
-            { x: 780, y: 360, occupied: false }
-        ];
+        let currentMapIndex = 0;
+        let activeMap = maps[0];
 
-        // Cấu hình các loại trụ
+        // --- CÁC LOẠI TRỤ PHÒNG THỦ ---
         const towerTypes = [
-            { id: 'archer', name: 'Trụ Cung', cost: 100, range: 130, damage: 18, speed: 25, color: '#38bdf8', desc: 'Tốc độ bắn cực nhanh, khắc chế quái bay/nhanh.' },
-            { id: 'cannon', name: 'Trụ Pháo', cost: 150, range: 110, damage: 55, speed: 70, color: '#f43f5e', desc: 'Sát thương diện rộng (AoE) cực mạnh.' },
-            { id: 'mage', name: 'Trụ Phép', cost: 130, range: 120, damage: 25, speed: 45, color: '#a855f7', desc: 'Làm chậm mục tiêu và bỏ qua một phần giáp.' },
-            { id: 'tesla', name: 'Trụ Lôi', cost: 200, range: 140, damage: 40, speed: 55, color: '#eab308', desc: 'Phóng điện liên hoàn xuyên qua nhiều quái.' }
+            { id: 'archer', name: 'Trụ Cung', cost: 90, range: 130, damage: 14, speed: 25, color: '#38bdf8', desc: 'Tốc độ bắn cực cao, khắc chế quái nhanh.' },
+            { id: 'cannon', name: 'Trụ Pháo', cost: 140, range: 110, damage: 48, speed: 70, color: '#f43f5e', desc: 'Sát thương diện rộng (AoE) cực mạnh.' },
+            { id: 'mage', name: 'Trụ Phép', cost: 120, range: 120, damage: 22, speed: 45, color: '#a855f7', desc: 'Làm chậm tốc độ di chuyển của quái.' },
+            { id: 'tesla', name: 'Trụ Tesla', cost: 180, range: 140, damage: 35, speed: 50, color: '#eab308', desc: 'Phóng điện điện giật liên hoàn nhiều mục tiêu.' },
+            { id: 'barracks', name: 'Doanh Trại', cost: 110, range: 90, damage: 8, speed: 90, color: '#10b981', desc: 'Triệu hồi lính gác chặn đường kẻ địch.' }
         ];
 
-        let gold = 650;
+        let gold = 600;
         let hp = 20;
-        let score = 0;
         let currentWave = 1;
-        let maxWaves = 10;
+        let maxWaves = 15;
         let waveInProgress = false;
-        let gameState = 'playing';
+        let gameState = 'start'; // start, playing, win, gameover
 
         let towers = [];
         let enemies = [];
         let projectiles = [];
         let particles = [];
-        let reinforcements = [];
+        let soldiers = [];
+        let hero = { x: 400, y: 300, targetX: 400, targetY: 300, speed: 3.5, damage: 25, range: 100, hp: 200, maxHp: 200, cooldown: 0 };
+
         let selectedTowerType = null;
         let selectedExistingTower = null;
 
-        // Khởi tạo bảng chọn trụ
+        function selectMap(index) {
+            currentMapIndex = index;
+            activeMap = maps[index];
+            document.getElementById('map-name').innerText = activeMap.name;
+            for(let i=0; i<3; i++) {
+                let btn = document.getElementById(`map-btn-${i}`);
+                if(i === index) {
+                    btn.className = "flex-1 py-2 bg-cyan-600 text-white font-bold rounded-lg text-xs border border-cyan-400 shadow";
+                } else {
+                    btn.className = "flex-1 py-2 bg-gray-800 text-gray-300 font-bold rounded-lg text-xs border border-gray-700 hover:bg-gray-700";
+                }
+            }
+        }
+
         function initTowerSelector() {
             const container = document.getElementById('tower-selector');
             container.innerHTML = '';
             towerTypes.forEach(t => {
                 const btn = document.createElement('div');
-                btn.className = `p-2.5 rounded-xl border border-slate-800 bg-slate-950/80 cursor-pointer hover:border-cyan-500 transition flex flex-col gap-1`;
+                btn.className = `p-2.5 rounded-xl border border-gray-800 bg-gray-950 cursor-pointer hover:border-cyan-500 transition flex flex-col justify-between`;
                 btn.innerHTML = `
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 mb-1">
                         <div class="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-white text-xs shadow-inner" style="background: ${t.color}">⚡</div>
-                        <div class="font-bold text-xs text-slate-200">${t.name}</div>
+                        <div class="font-bold text-xs text-gray-200">${t.name}</div>
                     </div>
                     <div class="text-[11px] text-yellow-400 font-semibold">${t.cost} Vàng</div>
                 `;
@@ -163,60 +190,85 @@
         function selectTowerType(id) {
             selectedTowerType = towerTypes.find(t => t.id === id);
             selectedExistingTower = null;
-            updateInfoPanel();
+            updateTowerInfoPanel();
         }
 
-        // Tương tác chuột trên bản đồ
+        // --- QUẢN LÝ XÂY DỰNG VÀ TƯƠNG TÁC CHUỘT ---
         canvas.addEventListener('click', (e) => {
             if (gameState !== 'playing') return;
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
 
-            // Kiểm tra click vào trụ đã xây
-            const clickedTower = towers.find(t => Math.hypot(t.x - x, t.y - y) < 24);
+            // Kiểm tra click vào trụ cũ
+            const clickedTower = towers.find(t => Math.hypot(t.x - x, t.y - y) < 22);
             if (clickedTower) {
                 selectedExistingTower = clickedTower;
                 selectedTowerType = null;
-                updateInfoPanel();
+                updateTowerInfoPanel();
                 return;
             }
 
-            // Kiểm tra click vào ô xây dựng trống
-            const slot = buildSlots.find(s => Math.hypot(s.x - x, s.y - y) < 26);
-            if (slot && !slot.occupied && selectedTowerType && gold >= selectedTowerType.cost) {
-                gold -= selectedTowerType.cost;
-                towers.push({
-                    x: slot.x,
-                    y: slot.y,
-                    slot: slot,
-                    type: selectedTowerType,
-                    level: 1,
-                    cooldown: 0,
-                    totalSpent: selectedTowerType.cost
-                });
-                slot.occupied = true;
-                selectedTowerType = null;
-                updateHUD();
-                updateInfoPanel();
+            // Kiểm tra click vào điểm xây dựng cố định trên bản đồ
+            const spot = activeMap.buildSpots.find(s => Math.hypot(s.x - x, s.y - y) < 25);
+            if (spot && selectedTowerType) {
+                // Kiểm tra xem vị trí này đã có trụ chưa
+                const occupied = towers.some(t => t.x === spot.x && t.y === spot.y);
+                if (!occupied && gold >= selectedTowerType.cost) {
+                    gold -= selectedTowerType.cost;
+                    let newTower = {
+                        x: spot.x, y: spot.y,
+                        type: selectedTowerType,
+                        level: 1,
+                        cooldown: 0,
+                        totalSpent: selectedTowerType.cost
+                    };
+                    towers.push(newTower);
+                    
+                    // Nếu là trụ barracks thì tạo lính gác ngay
+                    if(selectedTowerType.id === 'barracks') {
+                        spawnBarracksSoldiers(newTower);
+                    }
+
+                    selectedTowerType = null;
+                    updateHUD();
+                    updateTowerInfoPanel();
+                }
+            } else {
+                // Điều khiển tướng di chuyển đến vị trí click
+                hero.targetX = x;
+                hero.targetY = y;
             }
         });
 
-        function updateInfoPanel() {
-            const panel = document.getElementById('selected-info');
+        function spawnBarracksSoldiers(tower) {
+            for(let i=0; i<2; i++) {
+                soldiers.push({
+                    x: tower.x + (i === 0 ? -15 : 15),
+                    y: tower.y + 20,
+                    baseX: tower.x + (i === 0 ? -15 : 15),
+                    baseY: tower.y + 20,
+                    hp: 80, maxHp: 80, damage: 10, speed: 2,
+                    target: null, respawnTimer: 0
+                });
+            }
+        }
+
+        function updateTowerInfoPanel() {
+            const panel = document.getElementById('selected-tower-info');
             if (selectedExistingTower) {
                 panel.innerHTML = `
-                    <div class="font-bold text-cyan-400">${selectedExistingTower.type.name} (Cấp ${selectedExistingTower.level})</div>
-                    <div>Sát thương: ${selectedExistingTower.type.damage * selectedExistingTower.level} | Tầm: ${selectedExistingTower.type.range}</div>
-                    <div class="mt-2 flex gap-2">
-                        <button onclick="upgradeTower()" class="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded font-bold text-[10px]">Nâng cấp (${Math.floor(selectedExistingTower.type.cost * 0.75)})</button>
-                        <button onclick="sellTower()" class="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white rounded font-bold text-[10px]">Bán (+${Math.floor(selectedExistingTower.totalSpent * 0.6)})</button>
+                    <b class="text-cyan-400">${selectedExistingTower.type.name} (Lv.${selectedExistingTower.level})</b><br>
+                    ST: ${selectedExistingTower.type.damage * selectedExistingTower.level} \vert{} Tầm: ${selectedExistingTower.type.range}<br>
+                    <div class="mt-1.5 flex gap-2">
+                        <button onclick="upgradeTower()" class="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded font-bold text-[10px]">Nâng Cấp (${Math.floor(selectedExistingTower.type.cost * 0.75)})</button>
+                        <button onclick="sellTower()" class="px-2.5 py-1 bg-red-600 hover:bg-red-500 text-white rounded font-bold text-[10px]">Bán (+${Math.floor(selectedExistingTower.totalSpent * 0.6)})</button>
                     </div>
                 `;
             } else if (selectedTowerType) {
-                panel.innerHTML = `<span class="text-yellow-400 font-bold">Đang chọn: ${selectedTowerType.name}</span><br>${selectedTowerType.desc}<br><span class="text-slate-500">Click vào bệ đất trống để xây.</span>`;
+                panel.innerHTML = `<b class="text-yellow-400">Đang chọn: ${selectedTowerType.name}</b><br>${selectedTowerType.desc}<br><span class="text-cyan-300">Click vào bệ xây dựng trên bản đồ để đặt.</span>`;
             } else {
-                panel.innerHTML = `<span class="text-slate-500 italic">Click vào trụ trên bản đồ để quản lý, hoặc chọn trụ mới từ kho.</span>`;
+                panel.innerHTML = `Chọn một trụ để nâng cấp/bán hoặc click điểm bất kỳ để điều khiển Tướng di chuyển.`;
             }
         }
 
@@ -228,111 +280,179 @@
                 selectedExistingTower.level++;
                 selectedExistingTower.totalSpent += cost;
                 updateHUD();
-                updateInfoPanel();
+                updateTowerInfoPanel();
             }
         }
 
         function sellTower() {
             if (!selectedExistingTower) return;
             gold += Math.floor(selectedExistingTower.totalSpent * 0.6);
-            selectedExistingTower.slot.occupied = false;
+            // Xóa lính barracks tương ứng nếu có
+            if(selectedExistingTower.type.id === 'barracks') {
+                soldiers = soldiers.filter(s => Math.hypot(s.baseX - selectedExistingTower.x, s.baseY - selectedExistingTower.y) > 30);
+            }
             towers = towers.filter(t => t !== selectedExistingTower);
             selectedExistingTower = null;
             updateHUD();
-            updateInfoPanel();
+            updateTowerInfoPanel();
         }
 
         function updateHUD() {
             document.getElementById('gold-val').innerText = gold;
             document.getElementById('hp-val').innerText = hp;
-            document.getElementById('wave-val').innerText = `${currentWave} / ${maxWaves}`;
-            document.getElementById('score-val').innerText = score;
+            document.getElementById('wave-val').innerText = `${currentWave}/${maxWaves}`;
         }
 
-        // --- HỆ THỐNG ĐỢT QUÁI (WAVE ENGINE) ---
-        function startNextWave() {
-            if (waveInProgress || gameState !== 'playing') return;
-            waveInProgress = true;
-            document.getElementById('next-wave-btn').innerText = `ĐỢT ${currentWave} ĐANG DIỄN RA...`;
-            document.getElementById('next-wave-btn').disabled = true;
-
-            let count = 6 + currentWave * 4;
-            let spawned = 0;
-
-            let interval = setInterval(() => {
-                if (spawned < count) {
-                    let type = 'slime';
-                    if (currentWave >= 3 && Math.random() > 0.4) type = 'orc';
-                    if (currentWave >= 6 && Math.random() > 0.6) type = 'wolf';
-                    if (currentWave >= 8 && spawned === count - 1) type = 'boss';
-
-                    enemies.push(createEnemy(type, currentWave));
-                    spawned++;
-                } else {
-                    clearInterval(interval);
-                }
-            }, 900);
-        }
-
-        function createEnemy(type, wave) {
-            let hpMult = 1 + (wave - 1) * 0.35;
-            let base = { x: waypoints[0].x, y: waypoints[0].y, wpIndex: 1, slowTimer: 0 };
-
-            if (type === 'slime') return { ...base, type: 'Slime', hp: 60 * hpMult, maxHp: 60 * hpMult, speed: 1.6, color: '#34d399', radius: 10, reward: 12 };
-            if (type === 'orc') return { ...base, type: 'Orc', hp: 150 * hpMult, maxHp: 150 * hpMult, speed: 1.1, color: '#fb923c', radius: 14, reward: 25 };
-            if (type === 'wolf') return { ...base, type: 'Sói Đen', hp: 90 * hpMult, maxHp: 90 * hpMult, speed: 2.2, color: '#94a3b8', radius: 11, reward: 20 };
-            if (type === 'boss') return { ...base, type: 'Trùm Golem', hp: 650 * hpMult, maxHp: 650 * hpMult, speed: 0.7, color: '#e879f9', radius: 20, reward: 100 };
-        }
-
-        // --- KỸ NĂNG ĐẶC BIỆT ---
+        // --- HỆ THỐNG PHÉP THUẬT TOÀN CỤC ---
         function castMeteor() {
-            if (gold < 80) return;
-            gold -= 80;
-            updateHUD();
-            // Gây sát thương diện rộng giữa bản đồ
-            enemies.forEach(e => {
-                if (Math.hypot(e.x - 450, e.y - 250) < 150) {
-                    e.hp -= 180;
-                }
-            });
-            // Hiệu ứng hạt nổ
-            for (let i = 0; i < 40; i++) {
-                particles.push({
-                    x: 450, y: 250,
-                    vx: (Math.random() - 0.5) * 8,
-                    vy: (Math.random() - 0.5) * 8,
-                    color: '#f97316', life: 30
+            if (gold >= 100) {
+                gold -= 100;
+                updateHUD();
+                // Gây sát thương nổ toàn bộ quái trên màn hình
+                enemies.forEach(e => {
+                    e.hp -= 120;
+                    createParticles(e.x, e.y, '#f43f5e', 15);
                 });
             }
         }
 
-        function castReinforcement() {
-            if (gold < 50) return;
-            gold -= 50;
-            updateHUD();
-            reinforcements.push({ x: 380, y: 280, hp: 100, maxHp: 100, timer: 300 });
+        function castBlink() {
+            hero.x = hero.targetX;
+            hero.y = hero.targetY;
+            createParticles(hero.x, hero.y, '#38bdf8', 20);
         }
 
-        // --- GAME LOOP ---
+        // --- SINH SÓNG QUÁI & BOSS ---
+        function startNextWave() {
+            if (waveInProgress || gameState !== 'playing') return;
+            waveInProgress = true;
+            document.getElementById('next-wave-btn.innerText`', `Đợt ${currentWave} Đang Diễn Ra...`);
+            document.getElementById('next-wave-btn').disabled = true;
+
+            let spawnCount = 6 + currentWave * 4;
+            let spawned = 0;
+
+            let interval = setInterval(() => {
+                if (spawned < spawnCount) {
+                    let type = 'slime';
+                    if (currentWave >= 3 && Math.random() > 0.4) type = 'orc';
+                    if (currentWave >= 6 && Math.random() > 0.6) type = 'ghost';
+                    if (currentWave >= 9 && spawned === spawnCount - 1) type = 'boss';
+
+                    let mult = 1 + (currentWave - 1) * 0.35;
+                    enemies.push(createEnemy(type, mult));
+                    spawned++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 800);
+        }
+
+        function createEnemy(type, mult) {
+            let baseHp = 60, speed = 1.8, color = '#22c55e', radius = 11, reward = 15;
+            if (type === 'orc') { baseHp = 150; speed = 1.1; color = '#f97316'; radius = 15; reward = 30; }
+            if (type === 'ghost') { baseHp = 90; speed = 2.2; color = '#06b6d4'; radius = 12; reward = 25; }
+            if (type === 'boss') { baseHp = 600; speed = 0.8; color = '#a855f7'; radius = 20; reward = 120; }
+
+            return {
+                x: activeMap.waypoints[0].x,
+                y: activeMap.waypoints[0].y,
+                wpIndex: 1,
+                hp: baseHp * mult,
+                maxHp: baseHp * mult,
+                speed: speed,
+                color: color,
+                radius: radius,
+                reward: reward,
+                slowTimer: 0
+            };
+        }
+
+        // --- HỆ THỐNG PARTICLES (HIỆU ỨNG HẠT) ---
+        function createParticles(x, y, color, count = 8) {
+            for(let i=0; i<count; i++) {
+                particles.push({
+                    x, y,
+                    vx: (Math.random() - 0.5) * 5,
+                    vy: (Math.random() - 0.5) * 5,
+                    alpha: 1,
+                    color,
+                    size: Math.random() * 3 + 2
+                });
+            }
+        }
+
+        // --- GAME LOOP & CẬP NHẬT TRẠNG THÁI ---
         function update() {
             if (gameState !== 'playing') return;
 
-            // Cập nhật quái
+            // 1. Cập nhật Tướng Hero
+            let hdx = hero.targetX - hero.x;
+            let hdy = hero.targetY - hero.y;
+            let hdist = Math.hypot(hdx, hdy);
+            if (hdist > hero.speed) {
+                hero.x += (hdx / hdist) * hero.speed;
+                hero.y += (hdy / hdist) * hero.speed;
+            }
+            // Hero tấn công quái gần nhất
+            hero.cooldown--;
+            if (hero.cooldown <= 0) {
+                let target = enemies.find(e => Math.hypot(e.x - hero.x, e.y - hero.y) <= hero.range);
+                if (target) {
+                    target.hp -= hero.damage;
+                    projectiles.push({ x: hero.x, y: hero.y, target: target, damage: hero.damage, speed: 8, color: '#38bdf8' });
+                    hero.cooldown = 30;
+                }
+            }
+
+            // 2. Cập nhật Lính Barracks
+            soldiers.forEach(s => {
+                if (s.target && s.target.hp > 0) {
+                    let sdx = s.target.x - s.x;
+                    let sdy = s.target.y - s.y;
+                    let sdist = Math.hypot(sdx, sdy);
+                    if (sdist < 15) {
+                        s.target.hp -= 0.5; // Giao tranh cận chiến liên tục
+                    } else {
+                        s.x += (sdx / sdist) * s.speed;
+                        s.y += (sdy / sdist) * s.speed;
+                    }
+                } else {
+                    // Tìm quái trong bán kính để chặn
+                    let nearby = enemies.find(e => Math.hypot(e.x - s.baseX, e.y - s.baseY) < 80);
+                    if (nearby) {
+                        s.target = nearby;
+                    } else {
+                        // Trở về vị trí bảo vệ ban đầu
+                        let bdx = s.baseX - s.x;
+                        let bdy = s.baseY - s.y;
+                        let bdist = Math.hypot(bdx, bdy);
+                        if (bdist > 2) {
+                            s.x += (bdx / bdist) * s.speed;
+                            s.y += (bdy / bdist) * s.speed;
+                        }
+                    }
+                }
+            });
+
+            // 3. Cập nhật Quái Vật
             for (let i = enemies.length - 1; i >= 0; i--) {
                 let e = enemies[i];
-                let target = waypoints[e.wpIndex];
-                let dx = target.x - e.x;
-                let dy = target.y - e.y;
+                let targetWp = activeMap.waypoints[e.wpIndex];
+                if (!targetWp) continue;
+
+                let dx = targetWp.x - e.x;
+                let dy = targetWp.y - e.y;
                 let dist = Math.hypot(dx, dy);
 
-                let spd = e.speed;
-                if (e.slowTimer > 0) { spd *= 0.5; e.slowTimer--; }
+                let currentSpeed = e.speed;
+                if (e.slowTimer > 0) { currentSpeed *= 0.5; e.slowTimer--; }
 
-                if (dist < spd) {
-                    e.x = target.x;
-                    e.y = target.y;
+                if (dist < currentSpeed) {
+                    e.x = targetWp.x;
+                    e.y = targetWp.y;
                     e.wpIndex++;
-                    if (e.wpIndex >= waypoints.length) {
+                    if (e.wpIndex >= activeMap.waypoints.length) {
                         hp--;
                         enemies.splice(i, 1);
                         updateHUD();
@@ -340,33 +460,35 @@
                         continue;
                     }
                 } else {
-                    e.x += (dx / dist) * spd;
-                    e.y += (dy / dist) * spd;
+                    e.x += (dx / dist) * currentSpeed;
+                    e.y += (dy / dist) * currentSpeed;
                 }
 
                 if (e.hp <= 0) {
                     gold += e.reward;
-                    score += e.reward * 2;
+                    createParticles(e.x, e.y, e.color, 12);
                     enemies.splice(i, 1);
                     updateHUD();
                 }
             }
 
-            // Kiểm tra qua wave
-            if (waveInProgress && enemies.length === 0 && document.getElementById('next-wave-btn').disabled) {
+            // Kiểm tra hoàn thành wave
+            if (waveInProgress && enemies.length === 0) {
                 waveInProgress = false;
                 if (currentWave >= maxWaves) {
                     triggerGameOver(true);
                 } else {
                     currentWave++;
-                    document.getElementById('next-wave-btn').innerText = `BẮT ĐẦU ĐỢT ${currentWave}`;
-                    document.getElementById('next-wave-btn').disabled = false;
+                    const btn = document.getElementById('next-wave-btn');
+                    btn.innerText = `GỌI ĐỢT QUÁI (WAVE ${currentWave})`;
+                    btn.disabled = false;
                     updateHUD();
                 }
             }
 
-            // Cập nhật trụ bắn
+            // 4. Cập nhật Trụ Tấn Công
             towers.forEach(t => {
+                if(t.type.id === 'barracks') return;
                 t.cooldown--;
                 if (t.cooldown <= 0) {
                     let target = enemies.find(e => Math.hypot(e.x - t.x, e.y - t.y) <= t.type.range);
@@ -384,7 +506,7 @@
                 }
             });
 
-            // Cập nhật đạn
+            // 5. Cập nhật Đạn Bay
             for (let i = projectiles.length - 1; i >= 0; i--) {
                 let p = projectiles[i];
                 if (!p.target || p.target.hp <= 0) {
@@ -399,6 +521,7 @@
                 if (dist < p.speed) {
                     p.target.hp -= p.damage;
                     if (p.isMage) p.target.slowTimer = 100;
+                    createParticles(p.target.x, p.target.y, p.color, 5);
                     projectiles.splice(i, 1);
                 } else {
                     p.x += (dx / dist) * p.speed;
@@ -406,53 +529,47 @@
                 }
             }
 
-            // Cập nhật lính viện binh
-            for (let i = reinforcements.length - 1; i >= 0; i--) {
-                let r = reinforcements[i];
-                r.timer--;
-                if (r.timer <= 0) { reinforcements.splice(i, 1); continue; }
-                // Chặn quái gần đó
-                enemies.forEach(e => {
-                    if (Math.hypot(e.x - r.x, e.y - r.y) < 30) {
-                        e.x -= (e.x - r.x) * 0.1;
-                        e.y -= (e.y - r.y) * 0.1;
-                    }
-                });
+            // 6. Cập nhật Hạt Hiệu Ứng
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let pt = particles[i];
+                pt.x += pt.vx;
+                pt.y += pt.vy;
+                pt.alpha -= 0.03;
+                if (pt.alpha <= 0) particles.splice(i, 1);
             }
         }
 
-        // --- RENDER ĐỒ HỌA ---
+        // --- VẼ ĐỒ HỌA GAME ---
         function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = activeMap.bg;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 1. Vẽ bản đồ & Đường đi
+            // 1. Vẽ Đường Đi
             ctx.beginPath();
-            ctx.moveTo(waypoints[0].x, waypoints[0].y);
-            for (let i = 1; i < waypoints.length; i++) ctx.lineTo(waypoints[i].x, waypoints[i].y);
-            ctx.strokeStyle = '#1e293b';
+            ctx.moveTo(activeMap.waypoints[0].x, activeMap.waypoints[0].y);
+            for (let i = 1; i < activeMap.waypoints.length; i++) {
+                ctx.lineTo(activeMap.waypoints[i].x, activeMap.waypoints[i].y);
+            }
+            ctx.strokeStyle = activeMap.pathColor;
             ctx.lineWidth = 36;
             ctx.lineCap = 'round';
             ctx.lineJoin = 'round';
             ctx.stroke();
 
-            ctx.strokeStyle = '#334155';
-            ctx.lineWidth = 4;
-            ctx.setLineDash([12, 12]);
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            // 2. Vẽ bệ xây dựng trụ
-            buildSlots.forEach(s => {
+            // 2. Vẽ Điểm Xây Dựng Trụ
+            activeMap.buildSpots.forEach(s => {
                 ctx.beginPath();
-                ctx.arc(s.x, s.y, 20, 0, Math.PI * 2);
-                ctx.fillStyle = s.occupied ? 'rgba(30, 41, 59, 0.5)' : 'rgba(14, 165, 233, 0.15)';
+                ctx.arc(s.x, s.y, 16, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
                 ctx.fill();
-                ctx.strokeStyle = s.occupied ? '#334155' : '#0ea5e9';
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
                 ctx.lineWidth = 2;
+                ctx.setLineDash([4, 4]);
                 ctx.stroke();
+                ctx.setLineDash([]);
             });
 
-            // 3. Vẽ Trụ
+            // 3. Vẽ Trụ Phòng Thủ
             towers.forEach(t => {
                 if (selectedExistingTower === t) {
                     ctx.beginPath();
@@ -460,8 +577,10 @@
                     ctx.fillStyle = 'rgba(56, 189, 248, 0.08)';
                     ctx.fill();
                     ctx.strokeStyle = '#38bdf8';
+                    ctx.lineWidth = 1;
                     ctx.stroke();
                 }
+
                 ctx.beginPath();
                 ctx.arc(t.x, t.y, 20, 0, Math.PI * 2);
                 ctx.fillStyle = t.type.color;
@@ -476,25 +595,46 @@
                 ctx.fillText(`Lv.${t.level}`, t.x, t.y + 28);
             });
 
-            // 4. Vẽ Quái
+            // 4. Vẽ Lính Barracks
+            soldiers.forEach(s => {
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, 8, 0, Math.PI * 2);
+                ctx.fillStyle = '#34d399';
+                ctx.fill();
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#065f46';
+                ctx.stroke();
+            });
+
+            // 5. Vẽ Tướng Hero
+            ctx.beginPath();
+            ctx.arc(hero.x, hero.y, 14, 0, Math.PI * 2);
+            ctx.fillStyle = '#0ea5e9';
+            ctx.fill();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#ffffff';
+            ctx.stroke();
+
+            // 6. Vẽ Quái Vật & Thanh Máu
             enemies.forEach(e => {
                 ctx.beginPath();
                 ctx.arc(e.x, e.y, e.radius, 0, Math.PI * 2);
                 ctx.fillStyle = e.color;
                 ctx.fill();
                 ctx.lineWidth = 2;
-                ctx.strokeStyle = '#0f172a';
+                ctx.strokeStyle = '#030712';
                 ctx.stroke();
 
                 // Thanh máu
                 let barW = 26;
+                let barH = 4;
                 ctx.fillStyle = '#ef4444';
-                ctx.fillRect(e.x - barW/2, e.y - e.radius - 8, barW, 4);
+                ctx.fillRect(e.x - barW/2, e.y - e.radius - 8, barW, barH);
                 ctx.fillStyle = '#22c55e';
-                ctx.fillRect(e.x - barW/2, e.y - e.radius - 8, barW * (e.hp / e.maxHp), 4);
+                ctx.fillRect(e.x - barW/2, e.y - e.radius - 8, barW * Math.max(0, e.hp / e.maxHp), barH);
             });
 
-            // 5. Vẽ Đạn
+            // 7. Vẽ Đạn
             projectiles.forEach(p => {
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
@@ -502,15 +642,15 @@
                 ctx.fill();
             });
 
-            // 6. Vẽ Viện binh
-            reinforcements.forEach(r => {
+            // 8. Vẽ Hiệu Ứng Hạt
+            particles.forEach(pt => {
+                ctx.save();
+                ctx.globalAlpha = pt.alpha;
                 ctx.beginPath();
-                ctx.arc(r.x, r.y, 12, 0, Math.PI * 2);
-                ctx.fillStyle = '#3b82f6';
+                ctx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
+                ctx.fillStyle = pt.color;
                 ctx.fill();
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = '#ffffff';
-                ctx.stroke();
+                ctx.restore();
             });
         }
 
@@ -519,48 +659,52 @@
             const overlay = document.getElementById('game-overlay');
             const title = document.getElementById('overlay-title');
             const desc = document.getElementById('overlay-desc');
+
             overlay.classList.remove('hidden');
             if (isWin) {
-                title.innerText = "CHIẾN THẮNG HOÀNG KIM!";
-                title.className = "text-5xl font-black mb-3 text-emerald-400 tracking-wider";
-                desc.innerText = `Bạn đã hoàn thành xuất sắc với tổng điểm: ${score}`;
+                title.innerText = "CHIẾN THẮNG TUYỆT ĐỐI!";
+                title.className = "text-4xl font-extrabold mb-3 text-green-400";
+                desc.innerText = "Bạn đã bảo vệ thành công toàn bộ các vùng lãnh thổ khỏi cuộc xâm lược!";
             } else {
-                title.innerText = "THÀNH TRÌ THẤT THỦ!";
-                title.className = "text-5xl font-black mb-3 text-rose-500 tracking-wider";
-                desc.innerText = "Quái vật đã tràn qua phòng tuyến. Hãy thử lại!";
+                title.innerText = "PHÒNG TUYẾN THẤT THỦ!";
+                title.className = "text-4xl font-extrabold mb-3 text-red-500";
+                desc.innerText = "Kẻ thù đã phá vỡ lõi năng lượng. Hãy thử lại chiến thuật khác nhé!";
             }
         }
 
-        function restartGame() {
-            gold = 650;
+        function startGame() {
+            gold = 600;
             hp = 20;
-            score = 0;
             currentWave = 1;
             waveInProgress = false;
             gameState = 'playing';
             towers = [];
             enemies = [];
             projectiles = [];
-            reinforcements = [];
-            buildSlots.forEach(s => s.occupied = false);
+            soldiers = [];
+            particles = [];
+            hero.x = activeMap.waypoints[0].x + 40;
+            hero.y = activeMap.waypoints[0].y + 40;
+            hero.targetX = hero.x;
+            hero.targetY = hero.y;
             selectedTowerType = null;
             selectedExistingTower = null;
             document.getElementById('game-overlay').classList.add('hidden');
-            document.getElementById('next-wave-btn').innerText = `BẮT ĐẦU ĐỢT QUÁI (WAVE 1)`;
+            document.getElementById('next-wave-btn').innerText = `GỌI ĐỢT QUÁI (WAVE 1)`;
             document.getElementById('next-wave-btn').disabled = false;
             updateHUD();
-            updateInfoPanel();
+            updateTowerInfoPanel();
         }
 
-        // Vòng lặp chính
+        // Main Game Loop
         function mainLoop() {
             update();
             draw();
             requestAnimationFrame(mainLoop);
         }
 
+        // Khởi tạo ban đầu
         initTowerSelector();
-        updateHUD();
         mainLoop();
     </script>
 </body>
